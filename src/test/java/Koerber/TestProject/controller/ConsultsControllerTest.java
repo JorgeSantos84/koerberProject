@@ -1,6 +1,7 @@
 package Koerber.TestProject.controller;
 
 import Koerber.TestProject.dto.CreateConsultRequestDTO;
+import Koerber.TestProject.dto.FindConsultsDTO;
 import Koerber.TestProject.model.*;
 import Koerber.TestProject.service.ConsultService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,5 +85,17 @@ class ConsultsControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.doctor.doctorName").value("Maria"));
+    }
+
+    @Test
+    void findAllConsultsByPatientShouldReturn200() throws Exception {
+        FindConsultsDTO consultsDTO = FindConsultsDTO.builder()
+                        .patientId(1L)
+                                .build();
+
+        mockMvc.perform(post("/v1/consults/find-all")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(consultsDTO)))
+                .andExpect(status().isOk());
     }
 }
