@@ -104,7 +104,6 @@ public class ConsultService {
     public Page<Patient> getPatients(FilterPatientRequestDTO filter, Pageable pageable) {
         log.info("Retrieving all patients sortedBy: {}, sortDirection: {}", filter.getSortBy(), filter.getSortDirection());
         Specification<Patient> spec = Specification.where(null);
-
         if (filter.getMinAge() >= 0 && filter.getMaxAge() >= filter.getMinAge()) {
             spec = spec.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.between(root.get("age"), filter.getMinAge(), filter.getMaxAge()));

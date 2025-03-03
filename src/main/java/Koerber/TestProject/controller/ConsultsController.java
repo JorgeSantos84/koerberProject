@@ -5,6 +5,8 @@ import Koerber.TestProject.dto.*;
 import Koerber.TestProject.model.Consult;
 import Koerber.TestProject.model.PagedResponse;
 import Koerber.TestProject.model.Patient;
+import Koerber.TestProject.model.enums.SortByPatients;
+import Koerber.TestProject.model.enums.SortDirection;
 import Koerber.TestProject.service.ConsultService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,9 +58,9 @@ public class ConsultsController {
     @PostMapping("/patients/get-all")
     public ResponseEntity<PagedResponse<Patient>> getSpecialtiesWithFilter
             (@Valid @RequestBody FilterPatientRequestDTO filterPatientRequestDTO){
-
-        Sort.Direction direction = Sort.Direction.fromString(filterPatientRequestDTO.getSortDirection());
-        Pageable pageable = PageRequest.of(0, filterPatientRequestDTO.getSize(), direction, filterPatientRequestDTO.getSortBy());
+        Sort.Direction direction = Sort.Direction.fromString(filterPatientRequestDTO.getSortDirection().toString());
+        String fromEnumSort = SortByPatients.fromString(filterPatientRequestDTO.getSortBy().toString());
+        Pageable pageable = PageRequest.of(0, filterPatientRequestDTO.getSize(), direction, fromEnumSort);
         Page<Patient> patients = consultService.getPatients(
                 filterPatientRequestDTO,
                 pageable
