@@ -77,6 +77,7 @@ public class ConsultService {
      * Find and filter specielties with more than two unique patients
      */
     public List<SpecialtyAndNumberPatientsResponseDTO> findSpecialtiesUniquePatients(){
+        log.info("Retrieving Specialties with more than 2 unique patients...");
         List<Object[]> resultList = consultRepository.findUniqueSpecialtyAndPatient();
         HashMap<String, Integer> result = new HashMap<>();
 
@@ -101,6 +102,7 @@ public class ConsultService {
     }
 
     public Page<Patient> getPatients(FilterPatientRequestDTO filter, Pageable pageable) {
+        log.info("Retrieving all patients sortedBy: {}, sortDirection: {}", filter.getSortBy(), filter.getSortDirection());
         Specification<Patient> spec = Specification.where(null);
 
         if (filter.getMinAge() >= 0 && filter.getMaxAge() >= filter.getMinAge()) {
