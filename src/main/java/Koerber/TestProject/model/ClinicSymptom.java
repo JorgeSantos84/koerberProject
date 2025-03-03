@@ -24,7 +24,6 @@ public class ClinicSymptom implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_symptom")
-    @JsonIgnore
     private Long id;
 
     @Column(name = "name_symptom ", nullable = false)

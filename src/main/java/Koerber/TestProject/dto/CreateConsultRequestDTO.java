@@ -9,9 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 /**
- * DTO Class to create a consult
+ * DTO Class for a request to create a consult
  */
-public class ConsultRequestDTO {
+public class CreateConsultRequestDTO {
 
     @NotNull(message = "doctorId cannot be null")
     private Long doctorId;

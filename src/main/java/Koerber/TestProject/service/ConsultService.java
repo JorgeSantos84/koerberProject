@@ -1,21 +1,24 @@
 package Koerber.TestProject.service;
 
 
-import Koerber.TestProject.dto.ConsultRequestDTO;
+import Koerber.TestProject.dto.ConsultResponseDTO;
+import Koerber.TestProject.dto.CreateConsultRequestDTO;
+import Koerber.TestProject.dto.FindConsultsDTO;
+import Koerber.TestProject.dto.FindConsultsResponseDTO;
 import Koerber.TestProject.exception.ResourceNotFoundException;
-import Koerber.TestProject.model.ClinicPathology;
-import Koerber.TestProject.model.Consult;
-import Koerber.TestProject.model.Doctor;
-import Koerber.TestProject.model.Patient;
+import Koerber.TestProject.mapper.ConsultsMapper;
+import Koerber.TestProject.model.*;
 import Koerber.TestProject.repository.ClinicPathologyRepository;
 import Koerber.TestProject.repository.ConsultRepository;
 import Koerber.TestProject.repository.DoctorRepository;
 import Koerber.TestProject.repository.PatientRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,7 +30,10 @@ public class ConsultService {
     private final PatientRepository patientRepository;
     private final ClinicPathologyRepository pathologyRepository;
 
-    public Consult createConsult(ConsultRequestDTO requestDTO) {
+    @Autowired
+    private ConsultsMapper consultsMapper;
+
+    public Consult createConsult(CreateConsultRequestDTO requestDTO) {
         log.info("Creating consult...");
         Doctor doctor = doctorRepository.findById(requestDTO.getDoctorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
@@ -46,5 +52,26 @@ public class ConsultService {
 
         return consultRepository.save(consult);
     }
+
+    public FindConsultsResponseDTO findAllConsultsByPatient(FindConsultsDTO consultsDTO){
+        log.info("Finding all consults for patient: [{}]", consultsDTO.getPatientId());
+        long idPatient = consultsDTO.getPatientId();
+
+        List<Consult> consultList = consultRepository.findByPatient_IdPatient(idPatient);
+        Set<ClinicSymptom> clinicSymptoms = consultList.stream()
+                .map(Consult::getPathology)
+                .filter(Objects::nonNull)
+                .flatMap(pathology -> pathology.getSymptoms().stream())
+                .sorted(Comparator.comparingLong(ClinicSymptom::getId))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        List<ConsultResponseDTO> responseDTOS = consultsMapper.mapFromConsultsToConsultResponseDTO(consultList);
+
+        return FindConsultsResponseDTO.builder()
+                .consults(responseDTOS)
+                .symptoms(clinicSymptoms)
+                .build();
+    }
+
 
 }

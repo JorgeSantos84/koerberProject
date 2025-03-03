@@ -1,6 +1,6 @@
 package Koerber.TestProject.controller;
 
-import Koerber.TestProject.dto.ConsultRequestDTO;
+import Koerber.TestProject.dto.CreateConsultRequestDTO;
 import Koerber.TestProject.model.*;
 import Koerber.TestProject.service.ConsultService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,14 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoBeans;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,7 +30,7 @@ class ConsultsControllerTest {
     @MockitoBean
     private ConsultService consultService;
 
-    private ConsultRequestDTO requestDTO;
+    private CreateConsultRequestDTO requestDTO;
     private Consult consult;
     private Doctor doctor;
     private Patient patient;
@@ -60,7 +56,7 @@ class ConsultsControllerTest {
                 .build();
 
 
-        requestDTO = ConsultRequestDTO.builder()
+        requestDTO = CreateConsultRequestDTO.builder()
                 .doctorId(1L)
                 .patientId(1L)
                 .pathologyId(1L)
@@ -77,7 +73,7 @@ class ConsultsControllerTest {
                 .namePathology("Ophthalmology")
                 .build();
 
-        when(consultService.createConsult(any(ConsultRequestDTO.class))).thenReturn(consult);
+        when(consultService.createConsult(any(CreateConsultRequestDTO.class))).thenReturn(consult);
     }
 
 

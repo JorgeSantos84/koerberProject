@@ -1,24 +1,20 @@
 package Koerber.TestProject.service;
 
-import Koerber.TestProject.dto.ConsultRequestDTO;
+import Koerber.TestProject.dto.CreateConsultRequestDTO;
 import Koerber.TestProject.exception.ResourceNotFoundException;
 import Koerber.TestProject.model.*;
 import Koerber.TestProject.repository.ClinicPathologyRepository;
 import Koerber.TestProject.repository.ConsultRepository;
 import Koerber.TestProject.repository.DoctorRepository;
 import Koerber.TestProject.repository.PatientRepository;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,7 +68,7 @@ class ConsultServiceTest {
 
         @Test
         void shouldCreateConsultSuccessfully() {
-            ConsultRequestDTO requestDTO = new ConsultRequestDTO(1L, 1L, 1L);
+            CreateConsultRequestDTO requestDTO = new CreateConsultRequestDTO(1L, 1L, 1L);
 
             Consult expectedConsult = Consult.builder()
                     .doctor(doctor)
@@ -98,7 +94,7 @@ class ConsultServiceTest {
 
         @Test
         void shouldThrowExceptionWhenDoctorNotFound() {
-            ConsultRequestDTO requestDTO = new ConsultRequestDTO(1L, 1L, 1L);
+            CreateConsultRequestDTO requestDTO = new CreateConsultRequestDTO(1L, 1L, 1L);
 
             when(doctorRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -109,7 +105,7 @@ class ConsultServiceTest {
 
         @Test
         void shouldThrowExceptionWhenPatientNotFound() {
-            ConsultRequestDTO requestDTO = new ConsultRequestDTO(1L, 2L, 3L);
+            CreateConsultRequestDTO requestDTO = new CreateConsultRequestDTO(1L, 2L, 3L);
 
             when(doctorRepository.findById(1L)).thenReturn(Optional.of(doctor));
             when(patientRepository.findById(2L)).thenReturn(Optional.empty());
