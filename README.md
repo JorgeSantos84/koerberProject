@@ -20,7 +20,7 @@ Before running the project, ensure you have the following installed:
 
 ```sh
 git clone https://github.com/JorgeSantos84/koerberProject.git
-cd KoerberProject
+cd koerberProject
 ```
 
 ### 2. Build and Run the Project with Docker
@@ -81,4 +81,42 @@ To stop and remove the containers:
 ```sh
 docker-compose down -v
 ```
+
+# API documentation
+# CURL examples for all endpoints
+
+## Find Specialties with more than 2 unique patients
+curl -X GET "http://localhost:8080/v1/specialties/filter" 
+-H "Content-Ttype: application/json"
+
+
+## Get All Patients Custom Sorted
+curl -X POST "http://localhost:8080/v1/patients/get-all" 
+    -H "Content-Type: application/json" 
+    -d '{
+"sortBy": "PATIENT_NAME",
+"minAge": 1,
+"maxAge": 50,
+"sortDirection": "ASC",
+"size": 10
+}'
+
+## Find Consults By patientId
+curl -X POST "http://localhost:8080/v1/consults/find-all" 
+    -H "Content-Type: application/json" 
+    -d '{
+"patientId": 1
+}'
+
+## Create a consult
+curl -X POST "http://localhost:8080/v1/consults/create" 
+    -H "Content-Type: application/json" 
+    -d '{
+"doctorId": 1, "patientId": 1, "pathologyId": 1
+}'
+
+
+
+
+
 
