@@ -1,10 +1,7 @@
 package Koerber.TestProject.service;
 
 
-import Koerber.TestProject.dto.ConsultResponseDTO;
-import Koerber.TestProject.dto.CreateConsultRequestDTO;
-import Koerber.TestProject.dto.FindConsultsDTO;
-import Koerber.TestProject.dto.FindConsultsResponseDTO;
+import Koerber.TestProject.dto.*;
 import Koerber.TestProject.exception.ResourceNotFoundException;
 import Koerber.TestProject.mapper.ConsultsMapper;
 import Koerber.TestProject.model.*;
@@ -15,6 +12,9 @@ import Koerber.TestProject.repository.PatientRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -73,5 +73,42 @@ public class ConsultService {
                 .build();
     }
 
+    /**
+     * Find and filter specielties with more than two unique patients
+     */
+    public List<SpecialtyAndNumberPatientsResponseDTO> findSpecialtiesUniquePatients(){
+        List<Object[]> resultList = consultRepository.findUniqueSpecialtyAndPatient();
+        HashMap<String, Integer> result = new HashMap<>();
+
+        for(Object[] specialty: resultList){
+            String specialtyName = (String) specialty[1];
+            if(result.containsKey(specialtyName)){
+                int total = result.get(specialtyName) + 1;
+                result.put(specialtyName, total);
+            } else {
+                result.put(specialtyName, 1);
+            }
+        }
+
+        return result.entrySet().stream()
+                .filter(entry -> entry.getValue() > 2)
+                .map(entry -> SpecialtyAndNumberPatientsResponseDTO.builder()
+                        .specialtyName(entry.getKey())
+                        .numberOfPatients(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+
+    }
+
+    public Page<Patient> getPatients(FilterPatientRequestDTO filter, Pageable pageable) {
+        Specification<Patient> spec = Specification.where(null);
+
+        if (filter.getMinAge() >= 0 && filter.getMaxAge() >= filter.getMinAge()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.between(root.get("age"), filter.getMinAge(), filter.getMaxAge()));
+        }
+
+        return patientRepository.findAll(spec, pageable);
+    }
 
 }

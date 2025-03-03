@@ -1,19 +1,26 @@
 package Koerber.TestProject.controller;
 
 
-import Koerber.TestProject.dto.CreateConsultRequestDTO;
-import Koerber.TestProject.dto.FindConsultsDTO;
-import Koerber.TestProject.dto.FindConsultsResponseDTO;
+import Koerber.TestProject.dto.*;
 import Koerber.TestProject.model.Consult;
+import Koerber.TestProject.model.PagedResponse;
+import Koerber.TestProject.model.Patient;
 import Koerber.TestProject.service.ConsultService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1")
@@ -37,6 +44,30 @@ public class ConsultsController {
         FindConsultsResponseDTO consult = consultService.findAllConsultsByPatient(requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(consult);
     }
+
+    @Operation(summary = "Find specialties with more than 2 unique patients", description = "Return a list of specialties with more then 2 unique patients")
+    @GetMapping("/specialties/filter")
+    public ResponseEntity<List<SpecialtyAndNumberPatientsResponseDTO>> getSpecialtiesWithFilter(){
+        List<SpecialtyAndNumberPatientsResponseDTO> consult = consultService.findSpecialtiesUniquePatients();
+        return ResponseEntity.status(HttpStatus.OK).body(consult);
+    }
+
+    @Operation(summary = "Get all patients", description = "Return a list of patients")
+    @PostMapping("/patients/get-all")
+    public ResponseEntity<PagedResponse<Patient>> getSpecialtiesWithFilter
+            (@Valid @RequestBody FilterPatientRequestDTO filterPatientRequestDTO){
+
+        Sort.Direction direction = Sort.Direction.fromString(filterPatientRequestDTO.getSortDirection());
+        Pageable pageable = PageRequest.of(0, filterPatientRequestDTO.getSize(), direction, filterPatientRequestDTO.getSortBy());
+        Page<Patient> patients = consultService.getPatients(
+                filterPatientRequestDTO,
+                pageable
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(new PagedResponse<>(patients));
+    }
+
+
 
 
 }
