@@ -11,13 +11,15 @@ import Koerber.TestProject.repository.ClinicPathologyRepository;
 import Koerber.TestProject.repository.ConsultRepository;
 import Koerber.TestProject.repository.DoctorRepository;
 import Koerber.TestProject.repository.PatientRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@AllArgsConstructor
 public class ConsultService {
 
     private final ConsultRepository consultRepository;
@@ -25,9 +27,8 @@ public class ConsultService {
     private final PatientRepository patientRepository;
     private final ClinicPathologyRepository pathologyRepository;
 
-    public Consult createConsult(ConsultRequestDTO requestDTO){
-        log.info("Starting creation of a consult...");
-
+    public Consult createConsult(ConsultRequestDTO requestDTO) {
+        log.info("Creating consult...");
         Doctor doctor = doctorRepository.findById(requestDTO.getDoctorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 

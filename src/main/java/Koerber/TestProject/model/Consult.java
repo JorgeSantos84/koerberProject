@@ -30,25 +30,19 @@ public class Consult implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_doctor", nullable = false)
-    @JsonProperty("doctor ")
+    @JsonProperty("doctor")
     @Schema(name = "doctor", description = "Doctor")
     private Doctor doctor;
 
-//    @ManyToOne
-//    @JoinColumn(name = "id_specialty", nullable = false)
-//    @JsonProperty("specialty ")
-//    @Schema(name = "specialty", description = "Specialty")
-//    private ClinicSpecialty specialty;
-
     @ManyToOne
     @JoinColumn(name = "id_patient", nullable = false)
-    @JsonProperty("patient ")
+    @JsonProperty("patient")
     @Schema(name = "patient", description = "Patient")
     private Patient patient;
 
     @ManyToOne
     @JoinColumn(name = "id_pathology", nullable = false)
-    @JsonProperty("pathology ")
+    @JsonProperty("pathology")
     @Schema(name = "pathology", description = "Pathology")
     private ClinicPathology pathology;
 
@@ -59,6 +53,7 @@ public class Consult implements Serializable {
 
     @Transient
     @JsonProperty("symptoms")
+    @JsonIgnore
     public Set<ClinicSymptom> getSymptoms() {
         return pathology != null ? pathology.getSymptoms() : Set.of();
     }
